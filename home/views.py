@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.contrib import messages
 from .forms import device_addform
+from .models import MonitoredDevice
 
 # Create your views here.
 def homepage(request):
@@ -22,3 +23,14 @@ def load_devices(request):
 	else:
 		form = device_addform()
 	return render(request, 'home/load_devices.html', {'form': form, 'title': 'Add Device'})
+
+def list_devices(request):
+	context = {
+		'title': 'List Devices',
+		'device_list': MonitoredDevice.objects.all()
+	}
+	return render(request, 'home/list_devices.html', context)
+
+    
+
+    

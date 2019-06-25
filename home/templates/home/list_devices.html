@@ -1,0 +1,27 @@
+{% extends "home/base.html" %}
+{% block content %}
+	<legend class="border-bottom mb-4">
+		SD-WAN Device List
+	</legend>
+    <div class="container">
+    	<table class="table table-striped">
+    		<thead>
+	    		<th>
+	    			<td>Hostname</td>
+	    			<td>IP Address</td>
+	    			<td></td>
+	    		</th>
+	    	</thead>
+	    	<tbody>
+		    	{% for kit in device_list %}
+		    		<tr>
+		    			<td>{{ kit.id }}</td>
+		    			<td>{{ kit.hostname }}</td>
+		    			<td>{{ kit.ipaddress }}</td>
+		    			<td><button class="btn btn-danger btn-small" type="submit">Delete</button></td>
+		    		</tr>
+		    	{% endfor %}
+    		</tbody>
+    	</table>
+    </div>
+{% endblock content %}
