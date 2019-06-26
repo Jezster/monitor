@@ -29,17 +29,10 @@
                     </button>
                     <div class="collapse navbar-collapse" id="navbarToggle">
                         <div class="navbar-nav mr-auto">
-                            <a class="nav-item nav-link" href="{% url 'home_page' %}">Home</a>
+                            <a class="nav-item nav-link" href="{% url 'home_page' %}">List Devices</a>
+                            <div class="separator">|</div>
+                            <a class="nav-item nav-link" href="{% url 'load_devices' %}">Add Device</a>
                             <a class="nav-item nav-link" href="{% url 'about_page' %}">About</a>
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                  API
-                                </a>
-                                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                  <a class="dropdown-item" href="{% url 'load_devices' %}">Add Device</a>
-                                  <a class="dropdown-item" href="{% url 'list_devices' %}">List Devices</a>
-                                </div>
-                            </li>
                         </div>
                         <!-- Navbar Right Side -->
                     </div>
@@ -63,8 +56,8 @@
                         <h3>Information Bar</h3>
                         <p class='text-muted'>SD-WAN Services
                         <ul class="list-group">
-                            <li class="list-group-item list-group-item-light"><a href="https://www.citrix.com/downloads" target="_blank">Software Download</a></li>
-                            <li class="list-group-item list-group-item-light"><a href="https://docs.citrix.com/" target="_blank">Documentation</a></li>
+                            <li class="list-group-item list-group-item-light"><a href="https://www.citrix.com/downloads/citrix-sd-wan/" target="_blank">Software Download</a></li>
+                            <li class="list-group-item list-group-item-light"><a href="https://docs.citrix.com/en-us/citrix-sd-wan.html" target="_blank">Documentation</a></li>
                             <li class="list-group-item list-group-item-light"><a href="https://www.citrix.com/" target="_blank">Main Site</a></li>
                             <li class="list-group-item list-group-item-light"><a href="https://www.cloud.com/" target="_blank">Citrix Cloud</a></li>
                         </ul>

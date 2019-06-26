@@ -68,10 +68,6 @@ def monitor_device(request):
 	except:
 		return render(request, "home/failed.html", {"title": "Not Connected"})
 
-def homepage(request):
-	return render(request, "home/home.html", {'title': 'Home'})
-
-
 def aboutpage(request):
 	return render(request, "home/about.html", {'title': 'About'})
 
