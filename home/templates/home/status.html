@@ -1,0 +1,37 @@
+{% extends "home/base.html" %}
+{% block content %}
+        <div class="container">
+            <h4>Device Information</h4>
+            <table class="table table-sm">
+                <tr class="table-light"><td width="30%" >Hostname</td><td>{{ system.system_options.site_name }}</td></tr>
+                <tr class="table-light"><td width="30%" >Management IP Address</td><td>{{ system.system_options.management_ip }}</td></tr>
+                <tr class="table-light"><td width="30%" >License State</td><td>{{ system.system_options.license_state }}</td></tr>
+                <tr class="table-light"><td width="30%" >Model</td><td>{{ system.system_options.model }}</td></tr>
+                <tr class="table-light"><td width="30%" >Product Name</td><td>{{ system.system_options.product }}</td></tr>
+                <tr class="table-light"><td width="30%" >Serial No.</td><td>{{ system.system_options.serial_no }}</td></tr>
+                <tr class="table-light"><td width="30%" >Software Version</td><td>{{ system.system_options.sw_version }}</td></tr>
+                <tr class="table-light"><td width="30%" >OS Version</td><td>{{ system.system_options.os_ver }}</td></tr>
+                <tr class="table-light"><td width="30%" >Appliance Mode</td><td>{{ system.system_options.appliance_mode }}</td></tr>
+                <tr class="table-light"><td width="30%" >Appliance Uptime</td><td>{{ system.system_options.appliance_uptime }}</td></tr>
+                <tr class="table-light"><td width="30%" >Service Uptime</td><td>{{ system.system_options.service_uptime }}</td></tr>
+            </table>
+        </div>
+        <P>
+        <div class="container">
+            <h5>SD-WAN Overlay State</h5>
+            <table class="table table-sm">
+                {% for list in vpStatus.virtual_paths.virtual_paths %}
+                    {% if "up" in list.status %}
+                    <tr><td width="30%" class="table-light">Virtual Path Name</td><td class="table-success">{{ list.name }}</td></tr>
+                    <tr><td width="30%" class="table-light">Path Status</td><td class="table-success">UP</td></tr>
+                    <tr><td width="30%" class="table-light">Uptime</td><td class="table-success">{{ list.uptime }}</td></tr>
+                    {% endif %}
+                    {% if "down" in list.status %}
+                    <tr><td width="30%" class="table-light">Virtual Path Name</td><td class="table-danger">{{ list.name }}</td></tr>
+                    <tr><td width="30%" class="table-light">Path Status</td><td class="table-danger">DOWN</td></tr>
+                    <tr><td width="30%" class="table-light">Uptime</td><td class="table-danger">---</td></tr>
+                    {% endif %}
+                {% endfor %}
+            </table>
+        </div>
+{% endblock %}

@@ -3,25 +3,28 @@
 	<legend class="border-bottom mb-4">
 		SD-WAN Device List
 	</legend>
-    <div class="container">
-    	<table class="table table-striped">
-    		<thead>
-	    		<th>
-	    			<td>Hostname</td>
-	    			<td>IP Address</td>
-	    			<td></td>
-	    		</th>
-	    	</thead>
-	    	<tbody>
-		    	{% for kit in device_list %}
-		    		<tr>
-		    			<td>{{ kit.id }}</td>
-		    			<td>{{ kit.hostname }}</td>
-		    			<td>{{ kit.ipaddress }}</td>
-		    			<td><button class="btn btn-danger btn-small" type="submit">Delete</button></td>
-		    		</tr>
-		    	{% endfor %}
-    		</tbody>
-    	</table>
+    <form method="POST" enctype="multipart/form-data">
+    	{% csrf_token %}
+    	<p>The following devices have been added to the API monitoring demonstration</p>
+    	<div class="container">
+	    	<table class="table table-sm">
+		    	<tbody>
+			    	{% for kit in device_list %}
+			    		<tr>
+			    			<td>{{ kit.hostname }}</td>
+			    			<td>{{ kit.ipaddress }}</td>
+			    			<td>
+			    				<button class="btn btn-outline-info" type="submit" name="monitor" value="?device={{ kit.hostname }}">
+									Monitor
+								</button>
+			    				<button class="btn btn-outline-danger" type="submit" name="delete" value="{{ kit.hostname }}">
+									Delete
+								</button>
+							</td>
+			    		</tr>
+			    	{% endfor %}
+	    		</tbody>
+	    	</table>
+	    </form>
     </div>
 {% endblock content %}

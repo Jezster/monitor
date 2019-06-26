@@ -1,22 +1,7 @@
 {% extends "home/base.html" %}
+{% load crispy_forms_tags %}
 {% block content %}
-    {% if devices %}
-        {% for device in devices %} 
-            <article class="media content-section">
-                <img class="rounded-circle article-img" src="{{ post.author.profile.image.url }}">
-                <div class="media-body">
-                    <div class="article-metadata">
-                        <a class="mr-2" href="{% url 'UserPostPage' post.author.username %}">{{ post.author }}</a>
-                        <small class="text-muted">{{ post.date_posted|date:"d M Y - H:i" }}</small>
-                   </div>
-                    <h3><a class="article-title" href="{% url 'DetailView' post.id %}">{{ post.title }}</a></h3>
-                    <p class="article-content">{{ post.content }}</p>
-                </div>
-            </article>
-        {% endfor %}
-    {% else %}
-        <div class="container">
-            <p>Please add devices via the API menu</p>
-        </div>
-    {% endif %}
+    <p>Welcome to the API demonstration - please select from the API menu</p>
 {% endblock content %}
+
+ 
