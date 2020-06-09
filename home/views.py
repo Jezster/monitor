@@ -3,70 +3,56 @@ from django.http import HttpResponse
 from django.contrib import messages
 from .forms import device_addform
 from .models import MonitoredDevice
+from requests.auth import HTTPBasicAuth
+from django.core.validators import ip_address_validators
+from django.core.exceptions import ValidationError
 import requests
 import urllib3
 import json
 
 # Create your views here.
 
-def openSession(ipaddress, username, password):
-	headers = {
-		'Host': ipaddress,
-		'content-type': 'application/json',
-		'Connection': 'keep-alive'
-	}
-	payload = "{\"login\": {\r\n      \"password\":\""+password+"\",\r\n      \"username\":\""+username+"\"}}"
-	url = "https://"+ipaddress+"/sdwan/nitro/v1/config/login?action=add"
-	urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-	r = requests.Session()
-	login = r.post (url ,data=payload, headers=headers, verify=False)
-	print("Connect Successful")
-	return r
+def dnac_login(host, username, password):
+    url = "https://{}/api/system/v1/auth/token".format(host)
+    urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+    headers = {
+        'content-type': "application/json",
+        'x-auth-token': ""
+    }
+    response = requests.request("POST", url, auth=HTTPBasicAuth(username, password), headers=headers, verify=False)
+    return response.json()["Token"]
 
-def getSystemOptions(r, ipaddress):
-	headers = {
-		'Host': ipaddress,
-		'content-type': 'application/json',
-		'Connection': 'keep-alive'
-	}
-	Systemstatusurl = "https://"+ipaddress+"/sdwan/nitro/v1/config/system_options"
-	load_status = r.get (Systemstatusurl, headers=headers)
-	system_status = load_status.json()
-	return system_status
-
-def getVP(r, ipaddress):
-	headers = {
-		'Host': ipaddress,
-		'content-type': 'application/json',
-		'Connection': 'keep-alive'
-	}
-	VPstatusurl = "https://"+ipaddress+"/sdwan/nitro/v1/monitor/virtual_paths"
-	load_status = r.get (VPstatusurl, headers=headers)
-	vp_status = load_status.json()
-	return vp_status
+def network_device_list(host, token):
+    url = "https://{}/api/v1/network-device".format(host)
+    urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+    headers = {
+        'content-type': "application/json",
+        'x-auth-token': token
+    }
+    response = requests.get(url, headers=headers, verify=False)
+    data = response.json()
+    return data
 
 def monitor_device(request):
-	device_name = request.GET.get('device')
-	device = MonitoredDevice.objects.filter(hostname=device_name).first()
-	ipaddress = device.ipaddress
-	username = device.username
-	password = device.password
+    device_name = request.GET.get('device')
+    device = MonitoredDevice.objects.filter(hostname=device_name).first()
+    ipaddress = device.ipaddress
+    username = device.username
+    password = device.password
 
-	try:
-		r = openSession(ipaddress, username, password)
-		print(r)
-		vp_status = getVP(r, ipaddress)
-		system_status = getSystemOptions(r, ipaddress)
-		args = {
-			"title": "SDWAN Monitor",
-			"vpStatus": vp_status,
-			"system": system_status
-		}
-		print(args)
-		return render(request, "home/status.html", args)
+    try:
+        login = dnac_login(ipaddress, username, password)
+        system_status = network_device_list(ipaddress, login)
+        args = {
+            "dnacname": device_name,
+			"title": "DNAC Server Monitor",
+            "system": system_status
+        }
+        print(args)
+        return render(request, "home/status.html", args)
 
-	except:
-		return render(request, "home/failed.html", {"title": "Not Connected"})
+    except:
+        return render(request, "home/failed.html", {"title": "Not Connected"})
 
 def aboutpage(request):
 	return render(request, "home/about.html", {'title': 'About'})
@@ -74,10 +60,14 @@ def aboutpage(request):
 def load_devices(request):
 	if request.method == 'POST':
 		form = device_addform(request.POST)
-		if form.is_valid:
-			form.save()
-			hostname = form.cleaned_data.get('hostname')
-			messages.success(request, f'Device successfully added: {hostname}')
+		try:
+			if form.is_valid:
+				form.save()
+				hostname = form.cleaned_data.get('hostname')
+				messages.success(request, f'Device successfully added: {hostname}')
+				return redirect('load_devices')
+		except:
+			messages.warning(request, 'Error in entry - please try again (check IP)')
 			return redirect('load_devices')
 
 	else:
@@ -85,7 +75,7 @@ def load_devices(request):
 	return render(request, 'home/load_devices.html', {'form': form, 'title': 'Add Device'})
 
 def list_devices(request):
-	context = {
+	args = {
 		'title': 'List Devices',
 		'device_list': MonitoredDevice.objects.all()
 	}
@@ -96,7 +86,7 @@ def list_devices(request):
 		device = request.POST['monitor']
 		return redirect('/monitor_device/'+device)
 
-	return render(request, 'home/list_devices.html', context)
+	return render(request, 'home/list_devices.html', args)
 
     
 

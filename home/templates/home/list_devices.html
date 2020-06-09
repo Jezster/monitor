@@ -1,12 +1,12 @@
 {% extends "home/base.html" %}
 {% block content %}
 	<legend class="border-bottom mb-4">
-		SD-WAN Device List
+		DNA Centre Server List
 	</legend>
     <form method="POST" enctype="multipart/form-data">
     	{% csrf_token %}
     	<p>The following devices have been added to the API monitoring demonstration</p>
-    	<div class="container">
+    	<div class="card">
 	    	<table class="table table-sm">
 		    	<tbody>
 			    	{% for kit in device_list %}

@@ -1,20 +1,24 @@
 {% extends 'home/base.html' %}
-{% load crispy_forms_tags %}
 {% block content %}
-	<div class="content-section">
-		<form method="POST" enctype="multipart/form-data">
-			{% csrf_token %}
-			<fieldset class="form-group">
-				<legend class="border-bottom -mb-4">
-					SD-WAN Device Add
-				</legend>
-				{{ form|crispy }}
-			</fieldset>
-			<div class="form-group">
-				<button class="btn btn-outline-info" type="submit">
-					Submit
-				</button>
+			<div class="card card-body">
+				<form method="POST" enctype="multipart/form-data">
+				{% csrf_token %}
+				<fieldset class="form-group">
+					<legend class="border-bottom -mb-4">
+						Add DNA Centre Server
+					</legend>
+					<table>
+						<tr><td>{{ form.hostname.label }}</td><td>{{ form.hostname }}</td></tr>
+						<tr><td>{{ form.ipaddress.label }}</td><td>{{ form.ipaddress }}</td></tr>
+						<tr><td>{{ form.username.label }}</td><td>{{ form.username }}</td></tr>
+						<tr><td>{{ form.password.label }}</td><td>{{ form.password }}</td></tr>
+					</table>
+				</fieldset>
+				<div class="form-group">
+					<button class="btn btn-outline-info" type="submit">
+						Submit
+					</button>
+				</div>
+			</form>
 			</div>
-		</form>
-	</div>
 {% endblock content %}
