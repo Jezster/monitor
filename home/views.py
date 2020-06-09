@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.contrib import messages
-from .forms import device_addform
+from .forms import device_addform, device_editform
 from .models import MonitoredDevice
 from requests.auth import HTTPBasicAuth
 from django.core.validators import ip_address_validators
@@ -74,20 +74,38 @@ def load_devices(request):
 		form = device_addform()
 	return render(request, 'home/load_devices.html', {'form': form, 'title': 'Add Device'})
 
+def edit_devices(request):
+    device_name = request.GET.get('device')
+    if request.method == 'POST':
+        form = device_editform(request.POST, instance=MonitoredDevice.objects.filter(hostname=device_name).first())
+        try:
+            if form.is_valid:
+                form.save()
+                hostname = form.cleaned_data.get('hostname')
+                messages.success(request, f'Device successfully updated: {hostname}')
+                return redirect('edit_devices')
+        except:
+            messages.warning(request, 'Error in entry - please try again (check IP)')
+            return redirect('edit_devices')
+
+    else:
+        form = device_editform(instance=MonitoredDevice.objects.filter(hostname=device_name).first())
+
+    return render(request, 'home/edit_devices.html', {'form': form, 'title': 'Edit Device'})
+
 def list_devices(request):
-	args = {
-		'title': 'List Devices',
-		'device_list': MonitoredDevice.objects.all()
-	}
-	if 'delete' in request.POST:
-		device = request.POST['delete']
-		MonitoredDevice.objects.filter(hostname=device).delete()
-	elif 'monitor' in request.POST:
-		device = request.POST['monitor']
-		return redirect('/monitor_device/'+device)
+    args = {
+        'title': 'List Devices',
+        'device_list': MonitoredDevice.objects.all()
+    }
+    if 'delete' in request.POST:
+        device = request.POST['delete']
+        MonitoredDevice.objects.filter(hostname=device).delete()
+    elif 'monitor' in request.POST:
+        device = request.POST['monitor']
+        return redirect('/monitor_device/'+device)
+    elif 'edit' in request.POST:
+        device = request.POST['edit']
+        return redirect('/edit_device/'+device)
 
-	return render(request, 'home/list_devices.html', args)
-
-    
-
-    
+    return render(request, 'home/list_devices.html', args)

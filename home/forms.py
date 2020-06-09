@@ -8,4 +8,13 @@ class device_addform(forms.ModelForm):
 
 	class Meta:
 		model = MonitoredDevice
-		fields = ('hostname', 'ipaddress', 'username', 'password')
+		fields = ['hostname', 'ipaddress', 'username', 'password']
+
+
+class device_editform(forms.ModelForm):
+	password = forms.CharField(widget = forms.PasswordInput())
+	ipaddress = forms.GenericIPAddressField(label = 'Management IP Address')
+
+	class Meta:
+		model = MonitoredDevice
+		fields = ['hostname', 'ipaddress', 'username', 'password']
